@@ -6,8 +6,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
-      - ./shared:/app/shared
+      - ./backend:/backend
+      - ./shared:/backend/shared
     environment:
       - BACKEND_HOST=0.0.0.0
       - BACKEND_PORT=8000
@@ -26,9 +26,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
-      - ./shared:/app/shared
-      - /app/node_modules
+      - ./frontend:/frontend
+      - ./shared:/frontend/shared
+      - /frontend/node_modules
     environment:
       - FRONTEND_PORT=3000
       - FRONTEND_HOST=0.0.0.0
@@ -44,10 +44,8 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - setlist-network
-
-volumes: {}
+      - lutebard-network
 
 networks:
-  setlist-network:
+  lutebard-network:
     driver: bridge

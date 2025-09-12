@@ -26,6 +26,7 @@ tmp/
 .env
 .env.*
 !.env.example
+*.env
 
 # Coverage data
 coverage/
@@ -33,3 +34,5 @@ coverage/
 # Express specific ignores (if applicable)
 /server/node_modules
 /server/dist
+
+*.exe

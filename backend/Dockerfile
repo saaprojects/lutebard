@@ -1,35 +1,25 @@
-# FROM python:3.13-slim
-
-# Set environment variables
-# ENV PYTHONDONTWRITEBYTECODE=1
-# ENV PYTHONUNBUFFERED=1
-# ENV PYTHONPATH=/app
+FROM golang:1.19 AS builder
 
 # Set work directory
-WORKDIR /app
+WORKDIR /backend
 
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        libpq-dev \
-        libmagic1 \
-    && rm -rf /var/lib/apt/lists/*
+# Copy go mod files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
 
-# Install Python dependencies
-# COPY requirements.txt .
-# RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy project
+# Copy the rest of the source code
 COPY . .
 
-# Create non-root user
-RUN adduser --disabled-password --gecos '' appuser
-RUN chown -R appuser:appuser /app
-USER appuser
+# Build the Go app (will fail if no main.go, but this is a shell setup)
+RUN CGO_ENABLED=0 GOOS=linux go build -o backend
 
-# Expose port
+# Final minimal image
+FROM alpine:latest
+WORKDIR /backend
+COPY --from=builder /backend/backend ./backend
+
+# Expose API port
 EXPOSE 8000
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Run the binary (will fail if not built, but this is a shell setup)
+CMD ["./backend"]
