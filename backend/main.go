@@ -1,30 +1,22 @@
 package main
 
 import (
-	"context"
 	"log"
-	"os"
-	"github.com/jackc/pgx/v5"
-	"github.com/joho/godotenv"
+	"lutebard-backend/database"
 )
 
 func main() {
-	err := godotenv.Load("backend.env")
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
-
-	conn, err := pgx.Connect(context.Background(), os.Getenv("SUPABASE_DATABASE_URL"))
+	// Connect to Supabase using GORM
+	db, err := database.ConnectToSupabase()
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
-	defer conn.Close(context.Background())
 
-	// Example query to test connection
-	var version string
-	if err := conn.QueryRow(context.Background(), "SELECT version()").Scan(&version); err != nil {
-		log.Fatalf("Query failed: %v", err)
+	// Test the connection
+	if err := database.TestConnection(db); err != nil {
+		log.Fatalf("Database connection test failed: %v", err)
 	}
 
-	log.Println("Connected to:", version)
+	log.Println("✅ Successfully connected to database with GORM!")
+	log.Println("🚀 Lutebard backend is ready!")
 }

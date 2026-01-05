@@ -13,9 +13,9 @@ services:
       - BACKEND_PORT=8000
       - BACKEND_RELOAD=true
       - BACKEND_LOG_LEVEL=info
-      - DATABASE_URL=${SUPABASE_DATABASE_URL}
+      - SUPABASE_DATABASE_URL=${SUPABASE_DATABASE_URL}
     env_file:
-      - .env
+      - ./backend/backend.env
     networks:
       - lutebard-network
 
